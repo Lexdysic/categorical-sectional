@@ -593,7 +593,7 @@ if __name__ == '__main__':
 
     render_task = RecurringTask(
         'Render',
-        0,
+        15,
         render_thread,
         LOGGER,
         True)
