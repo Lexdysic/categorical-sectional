@@ -2,12 +2,10 @@
 Module to handle tasks that occur on a regularly scheduled interval.
 """
 
-import threading
+import datetime
 import sys
+import threading
 import time
-
-FUNCTION_A_COUNT = 0
-FUNCTION_B_COUNT = 0
 
 
 class RecurringTask(object):
@@ -15,68 +13,56 @@ class RecurringTask(object):
     Object to control and handle a recurring task.
     """
 
-    def stop(self):
-        try:
-            if self.__last_task__ is not None:
-                self.pause()
-
-            return True
-        except:
-            return False
-
-    def is_running(self):
-        """
-        Returns True if the task is running.
-        """
-
-        return self.__task_callback__ is not None and self.__is_running__
-
-    def start(self):
+    def start(
+        self
+    ) -> bool:
         """
         Starts the task if it is not already running.
         """
-        if self.__task_callback__ is not None and not self.__is_running__:
+        if self.__task_callback__ is not None \
+            and self.__thread__ is not None \
+                and not self.__thread__.isAlive():
             self.__is_running__ = True
-            self.__run_task__()
+            self.__thread__.start()
 
             return True
 
         return False
 
-    def pause(self):
-        """
-        Pauses the task if it is running.
-        """
-
-        if self.is_running():
-            self.__is_running__ = False
-
-    def __run_task__(self):
-        """
-        Runs the callback.
-        """
-
-        self.__last_task__ = threading.Thread(target=self.__run_loop__)
-        self.__last_task__.start()
-
-    def __run_loop__(self):
+    def __run_loop__(
+        self
+    ):
         while True:
-            if self.__is_running__ and self.__task_callback__ is not None:
-                try:
-                    self.__task_callback__()
-                except Exception as ex:
-                    # + sys.exc_info()[0]
-                    error_mesage = '{} EX:{}'.format(self.__task_name__, ex)
-                    if self.__logger__ is not None:
-                        self.__logger__.warn(error_mesage)
-                    else:
-                        print(error_mesage)
+            task_start_time = datetime.datetime.utcnow()
+            try:
+                self.__task_callback__()
+            except Exception as e:
+                # + sys.exc_info()[0]
+                error_mesage = "EX({}):{}".format(self.__task_name__, e)
 
-            time.sleep(int(self.__task_interval__))
+                if self.__logger__ is not None:
+                    self.__logger__.info(error_mesage)
+                else:
+                    print(error_mesage)
+            task_run_time = datetime.datetime.utcnow() - task_start_time
+            time_to_sleep = self.__task_interval__ - task_run_time.total_seconds()
 
-    def __init__(self, task_name, task_interval, task_callback, logger=None, start_immediate=False):
+            if time_to_sleep > 0.0:
+                # print("{}: Sleeping for {} seconds".format(
+                #     self.__task_name__,
+                #     time_to_sleep))
+                time.sleep(time_to_sleep)
+
+    def __init__(
+        self,
+        task_name: str,
+        task_interval: float,
+        task_callback,
+        logger=None,
+        start_immediate: bool = True
+    ):
         """
-        Creates a new reocurring task.
+        Creates a new reccurring task.
         The call back is called at the given time schedule.
         """
 
@@ -84,13 +70,13 @@ class RecurringTask(object):
         self.__task_interval__ = task_interval
         self.__task_callback__ = task_callback
         self.__logger__ = logger
-        self.__is_running__ = False
-        self.__last_task__ = None
+        self.__thread__ = threading.Thread(
+            target=self.__run_loop__,
+            name=task_name
+        )
 
         if start_immediate:
             self.start()
-        else:
-            threading.Timer(int(self.__task_interval__), self.start).start()
 
 
 class TimerTest(object):
