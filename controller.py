@@ -600,7 +600,7 @@ if __name__ == '__main__':
 
     while True:
         try:
-            time.sleep(0.1)
+            time.sleep(1.0)
         except KeyboardInterrupt:
             break
         except SystemExit:
