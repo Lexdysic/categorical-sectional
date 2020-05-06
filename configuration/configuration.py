@@ -21,6 +21,7 @@ else:
 STANDARD = 'led'
 PWM = 'pwm'
 WS2801 = 'ws2801'
+WS281X = 'ws281x'
 
 
 __DEFAULT_CONFIG_FILE__ = '../data/config.json'
@@ -246,6 +247,8 @@ def get_colors():
 
     if get_mode() == WS2801:
         return __get_ws2801_colors__()
+    elif get_mode() == WS281X:
+        return __get_ws2801_colors__()
     elif get_mode() == PWM:
         return __get_pwm_colors__()
 
@@ -318,6 +321,8 @@ def get_airport_configs():
         return __load_gpio_airport_pins__(get_airport_file())
     elif mode == WS2801:
         return __load_airport_ws2801__(get_airport_file())
+    elif mode == WS281X:
+        return __load_airport_ws281x__(get_airport_file())
     else:
         raise Exception('Unable to determine light types')
 
@@ -374,5 +379,33 @@ def __load_airport_ws2801__(
         normalized_code = airport_code.upper()
 
         out_airport_map[normalized_code] = airport_data[airport_code]['neopixel']
+
+    return out_airport_map
+
+def __load_airport_ws281x__(
+    config_file: str
+) -> dict:
+    """
+    Loads the configuration for WS281x.
+
+    Arguments:
+        config_file {string} -- The file name & location to load.
+
+    Returns:
+        dict -- A dictionary keyed by airport identifier that holds the pixel index and a reserved value.
+    """
+
+    out_airport_map = {}
+
+    json_config = __load_config_file__(config_file)
+    airports = json_config[WS281X]
+
+    for airport_data in airports:
+        keylist = []
+        keylist.extend(iter(airport_data.keys()))
+        airport_code = keylist[0]
+        normalized_code = airport_code.upper()
+
+        out_airport_map[normalized_code] = airport_data[airport_code]['pixel']
 
     return out_airport_map
