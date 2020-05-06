@@ -1,10 +1,11 @@
 {
-  "mode": "ws2801",
+  "mode": "ws281x",
   "pixel_count": 50,
+  "gpio_pin": 18,
   "spi_device": 0,
   "spi_port": 0,
   "pwm_frequency": 100,
-  "airports_file": "../data/kawo_to_kosh.json",
+  "airports_file": "~/weather_map/western_cascades.json",
   "blink_old_stations": true,
   "night_lights": true,
   "night_populated_yellow": false,
