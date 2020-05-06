@@ -44,7 +44,7 @@ from renderers import led, led_pwm
 from safe_logging import safe_log, safe_log_warning
 
 if not local_debug.is_debug():
-    from renderers import ws2801
+    from renderers import ws2801, ws281x
 
 
 airport_conditions = {}
@@ -105,6 +105,10 @@ def get_renderer():
         spi_port = configuration.CONFIG["spi_port"]
         spi_device = configuration.CONFIG["spi_device"]
         return ws2801.Ws2801Renderer(pixel_count, spi_port, spi_device)
+    elif configuration.get_mode() == configuration.WS281X:
+        pixel_count = configuration.CONFIG["pixel_count"]
+        gpio_pin = configuration.CONFIG["gpio_pin"]
+        return ws281x.Ws281xRenderer(pixel_count, gpio_pin)
     elif configuration.get_mode() == configuration.PWM:
         return led_pwm.LedPwmRenderer(airport_render_config)
     else:
