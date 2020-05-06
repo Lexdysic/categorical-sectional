@@ -400,12 +400,9 @@ def __load_airport_ws281x__(
     json_config = __load_config_file__(config_file)
     airports = json_config[WS281X]
 
-    for airport_data in airports:
-        keylist = []
-        keylist.extend(iter(airport_data.keys()))
-        airport_code = keylist[0]
+    for airport_code, index in airports.items():
         normalized_code = airport_code.upper()
 
-        out_airport_map[normalized_code] = airport_data[airport_code]
+        out_airport_map[normalized_code] = index
 
     return out_airport_map
