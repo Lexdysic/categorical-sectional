@@ -42,7 +42,7 @@ class Ws281xRenderer(object):
                 LED_INVERT,
                 LED_BRIGHTNESS,
                 LED_CHANNEL)
-            strip.begin()
+            self.pixels.begin()
 
             # Clear all the pixels to turn them off.
             [self.pixels.setPixelColorRGB(pixel, 0, 0, 0) for pixel in range(0, self.pixel_count)]
