@@ -59,7 +59,7 @@ def __get_resolved_filepath__(
 
         normalized_path = os.path.normpath(raw_path)
 
-        print("Normalized path='{}'".format(raw_path))
+        print("Normalized path='{}'".format(normalized_path))
 
         return normalized_path
     except:
