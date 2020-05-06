@@ -196,7 +196,7 @@ You do not need to include ALL of these values. Any values provided in this file
   "spi_port": 0,
   "gpio_pin": 18,
   "pwm_frequency": 100,
-  "airports_file": "data/kawo_to_kosh.json",
+  "airports_file": "data/western_cascades.json",
   "blink_old_stations": true,
   "night_lights": true,
   "night_populated_yellow": false,
@@ -326,7 +326,7 @@ This shows the two sections for an example airport file.
     { "KTIW": { "neopixel": 8 } },
     { "KPWT": { "neopixel": 10 } },
     { "KSHN": { "neopixel": 12 } }
-  ]
+  ],
   "ws281x": [
     { "KRNT": 0 },
     { "KSEA": 2 },
