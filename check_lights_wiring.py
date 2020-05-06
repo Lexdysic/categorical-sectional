@@ -8,7 +8,7 @@ import lib.local_debug as local_debug
 from configuration import configuration
 from data_sources import weather
 from lib.logger import Logger
-from renderers import led, led_pwm, ws2801
+from renderers import led, led_pwm, ws2801, ws281x
 from safe_logging import safe_log, safe_log_warning
 
 python_logger = logging.getLogger("check_lights_wiring")
@@ -39,6 +39,11 @@ def get_test_renderer():
         spi_device = configuration.CONFIG["spi_device"]
 
         return ws2801.Ws2801Renderer(pixel_count, spi_port, spi_device)
+    elif configuration.get_mode() == configuration.WS281X:
+        pixel_count = configuration.CONFIG["pixel_count"]
+        gpio_pin = configuration.CONFIG["gpio_pin"]
+        
+        return ws281x.Ws281xRenderer(pixel_count, gpio_pin)
     elif configuration.get_mode() == configuration.PWM:
         return led_pwm.LedPwmRenderer(airport_render_config)
     else:
