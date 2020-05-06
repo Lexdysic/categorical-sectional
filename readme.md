@@ -1,10 +1,8 @@
 # VFR Light Map
 
-This is a fork of Dylan Rush's excellent "[Categorical-Sectional](https://github.com/dylanrush/categorical-sectional)".
+This is a fork of John Marzulli's excellent "[Categorical-Sectional](https://github.com/JohnMarzulli/categorical-sectional)".
 
-The purpose of this version was to unify the control code of different LED light types and to add support for WS2801 "individually" addressible LED lights.
-
-I have also attempted to make setup easier by moving the LED configuration into data files.
+The purpose of this version was to add support for WS281x "individually" addressible LED lights.
 
 ![Seattle to Oshkosh, showing Sunset across the country](media/weather_and_fade.jpg)
 
@@ -196,6 +194,7 @@ You do not need to include ALL of these values. Any values provided in this file
   "pixel_count": 50,
   "spi_device": 0,
   "spi_port": 0,
+  "gpio_pin": 18,
   "pwm_frequency": 100,
   "airports_file": "data/kawo_to_kosh.json",
   "blink_old_stations": true,
@@ -277,13 +276,18 @@ This controls which type of LED system to use for controlling the lights.
 
 Value  | Description
 ------ | ------------------------------------------------------------------------------------------------
+ws281x | Use WS281X based light strands
 ws2801 | Use WS2801 based light strands like those from AdaFruit
 pwm    | Use pulse width modulation based LEDs. This can have their colors changed more than normal LEDs.
 led    | Use standard LEDs that have a positive wire for each color and a common ground.
 
 #### pixel_count
 
-If you are using ws2801 based LEDs then you may need to change "pixel_count". Each strand will come with a numbe rof LEDs. You you are using a single strand, then set this number to that count. If you have combined strands, then set the total number of lights.
+If you are using ws281x based LEDs then you may need to change "pixel_count". Each strand will come with a number of LEDs. You you are using a single strand, then set this number to that count. If you have combined strands, then set the total number of lights.
+
+#### gpio_pin
+
+WS281x based LEDs have a single signal pin for all communication to the strand, this is the signal pin, by default 18.
 
 #### spi_device and spi_port
 
@@ -323,6 +327,15 @@ This shows the two sections for an example airport file.
     { "KPWT": { "neopixel": 10 } },
     { "KSHN": { "neopixel": 12 } }
   ]
+  "ws281x": [
+    { "KRNT": 0 },
+    { "KSEA": 2 },
+    { "KPLU": 4 },
+    { "KOLM": 6 },
+    { "KTIW": 8 },
+    { "KPWT": 10 },
+    { "KSHN": 12 }
+  ]
 }
 ```
 
@@ -339,6 +352,18 @@ These wire numbers refer to the **physical** board number on the Raspberry pie.
 So for KRNT (Renton), the wire leading to the Red LED would be wired to the GPIO board at pin 3\. The Blue LED would be wired to pin 5, and the green LED wire would be wired to pin 7.
 
 _NOTE:_ The "pwm" section is used by both the normal LEDs and the pulse width controlled LEDs.
+
+##### ws281x
+
+This section contains the information required to control a strand of WS281x lights.
+
+Once again, this starts with an airport or weather station identifier.
+
+Next to contains an index. This is the order of the light on the strand.
+
+_NOTE:_ The first light is "0", the second light is "1".
+
+Due to the way your lights may need to be arranged to fit on the map, some lights may need to be skipped, so keep track of your lights.
 
 ##### ws2801
 
@@ -441,7 +466,7 @@ Capitalization counts. The map lights should come on with each boot now.
 
 This project uses "standard" airport coloring for flight rules category, along with some unique colors.
 
-Flight Rule | WS2801         | PWM            | LED
+Flight Rule | WS2801/WS281X  | PWM            | LED
 ----------- | -------------- | -------------- | --------------
 VFR         | Solid green    | Solid green    | Solid green
 MVFR        | Solid blue     | Solid blue     | Solid blue
@@ -459,6 +484,7 @@ Error       | Blinking white | Blinking white | Blinking white
 
 Version | Change
 ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2.0     | Add WS281X support
 1.9     | Add documentation about the upgrade process for existing installations. Add configuration to control if old data causes a light to blink or not.
 1.8     | Use the configuration files provided as a default base, and then source user configuration from the user directory.
 1.7     | Allow for the brightness of the lights to be dimmed. This affects both the daytime and nighttime colors.
