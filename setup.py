@@ -4,7 +4,8 @@ from setuptools import setup
 installs = [
     'pytest',
     'Adafruit_WS2801',
-    'rpi-ws281x-python'
+    'rpi-ws281x-python',
+    'neopixel',
     'requests'
 ]
 
