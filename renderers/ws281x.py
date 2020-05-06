@@ -29,6 +29,7 @@ class Ws281xRenderer(object):
             gpio_pin {int} -- The GPIO pin 
         """
 
+        self.gpio_pin = gpio_pin
         self.pixel_count = pixel_count
 
         if not local_debug.is_debug():
