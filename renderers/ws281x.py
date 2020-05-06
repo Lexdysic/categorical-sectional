@@ -8,7 +8,7 @@ from __future__ import division
 import time
 
 import lib.local_debug as local_debug
-import rpi_ws281x import PixelStrip, Color
+import rpi_ws281x
 
 # LED strip configuration:
 LED_COUNT = 16        # Number of LED pixels.
