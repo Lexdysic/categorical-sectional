@@ -406,6 +406,6 @@ def __load_airport_ws281x__(
         airport_code = keylist[0]
         normalized_code = airport_code.upper()
 
-        out_airport_map[normalized_code] = airport_data[airport_code]['pixel']
+        out_airport_map[normalized_code] = airport_data[airport_code]
 
     return out_airport_map
